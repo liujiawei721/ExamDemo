@@ -33,6 +33,10 @@ public class Schedule {
     		taskInfo.setNodeId(nodeId);
     	}
     	
+    	String path = "/" + nodeId;  
+        String createPath = zk.create(path, null/*data*/, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);  
+        System.out.println(createPath); 
+    	
         return ReturnCodeKeys.E003;
     }
 
@@ -41,7 +45,16 @@ public class Schedule {
     	if(nodeId<0){
     		return ReturnCodeKeys.E004;
     	}else{
-    		
+    		 String path = "/" + nodeId;  
+    	        try {  
+    	            List<String> nodes = zk.getChildren(path, false);  
+    	            for (String node : nodes) {  
+    	                zk.delete(path + "/" + node, -1);  
+    	            }  
+    	            zk.delete(path, -1);  
+    	        } catch (Exception e) {  
+    	            e.printStackTrace();  
+    	        }
     	}
         return ReturnCodeKeys.E006;
     }
